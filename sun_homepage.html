@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>たいよう - 輝く個性で世界を照らす</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff6b35;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "☀️";
+            margin-right: 10px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ff6b35;
+        }
+
+        /* メインセクション */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b35, #ffd700, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+            font-weight: 900;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.6)); }
+        }
+
+        .hero-content p {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* セクション共通スタイル */
+        .section {
+            padding: 100px 0;
+            background: white;
+            margin: 50px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #ff6b35;
+        }
+
+        /* プロフィールセクション */
+        .profile {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 50px;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .profile-image {
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b35, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .profile-text h3 {
+            font-size: 2rem;
+            color: #ff6b35;
+            margin-bottom: 20px;
+        }
+
+        .profile-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* スキル・趣味セクション */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .skill-card {
+            background: linear-gradient(135deg, #fff, #fef7f0);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+
+        .skill-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .skill-card h3 {
+            color: #ff6b35;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* ギャラリーセクション */
+        .gallery {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* 連絡先セクション */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .contact-item {
+            background: linear-gradient(135deg, #fff, #fef7f0);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .contact-item h3 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .contact-item a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-item a:hover {
+            color: #ff6b35;
+        }
+
+        /* フッター */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .profile {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                width: 200px;
+                height: 200px;
+                font-size: 6rem;
+            }
+        }
+
+        /* パーティクルアニメーション */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- パーティクル効果 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ヘッダー -->
+    <header>
+        <nav class="container">
+            <div class="logo">たいよう</div>
+            <ul class="nav-links">
+                <li><a href="#home">ホーム</a></li>
+                <li><a href="#about">プロフィール</a></li>
+                <li><a href="#skills">スキル</a></li>
+                <li><a href="#gallery">ギャラリー</a></li>
+                <li><a href="#contact">連絡先</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- メインセクション -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>たいよう</h1>
+            <p>輝く個性で、みんなの日々を少し明るく</p>
+            <a href="#about" class="cta-button">もっと知る</a>
+        </div>
+    </section>
+
+    <!-- プロフィールセクション -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2>プロフィール</h2>
+            <div class="profile">
+                <div class="profile-image">
+                    <div class="profile-avatar">☀️</div>
+                </div>
+                <div class="profile-text">
+                    <h3>こんにちは、たいようです！</h3>
+                    <p>
+                        名前の通り、太陽のように明るく周りを照らすことが大好きです。
+                        新しいことに挑戦するのが趣味で、いつも何かにワクワクしています。
+                    </p>
+                    <p>
+                        友達からは「一緒にいると元気になる」とよく言われます。
+                        人とのつながりを大切にし、みんなが笑顔になる瞬間が一番幸せです。
+                    </p>
+                    <p>
+                        このサイトでは、僕の日常や興味のあること、
+                        これまでの経験などを紹介していきます。
+                        ぜひゆっくりご覧ください！
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- スキル・趣味セクション -->
+    <section class="section" id="skills">
+        <div class="container">
+            <h2>スキル・趣味</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <span class="skill-icon">🎨</span>
+                    <h3>クリエイティブ</h3>
+                    <p>デザインや写真撮影が得意。日常の美しい瞬間を切り取るのが大好きです。</p>
+                </div>
+                <div class="skill-card">
+                    <span class="skill-icon">🏃‍♂️</span>
+                    <h3>アクティブ</h3>
+                    <p>ランニングやハイキングで自然を満喫。体を動かすことでエネルギーをチャージ！</p>
+                </div>
+                <div class="skill-card">
+                    <span class="skill-icon">📚</span>
+                    <h3>学習熱心</h3>
+                    <p>新しい知識を得ることが大好き。読書や勉強を通じて日々成長しています。</p>
+                </div>
+                <div class="skill-card">
+                    <span class="skill-icon">🎵</span>
+                    <h3>音楽愛好</h3>
+                    <p>ギターを弾いたり、ライブに行ったり。音楽は僕の人生に欠かせないものです。</p>
+                </div>
+                <div class="skill-card">
+                    <span class="skill-icon">🍳</span>
+                    <h3>料理上手</h3>
+                    <p>友達を招いて手料理でもてなすのが好き。みんなで食べるご飯は最高です！</p>
+                </div>
+                <div class="skill-card">
+                    <span class="skill-icon">🌱</span>
+                    <h3>園芸</h3>
+                    <p>植物を育てることで癒されています。小さな成長を見守るのが楽しいです。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ギャラリーセクション -->
+    <section class="section gallery" id="gallery">
+        <div class="container">
+            <h2>思い出ギャラリー</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <span class="gallery-icon">🌅</span>
+                    <h3>朝日撮影</h3>
+                    <p>早起きして撮った日の出の写真コレクション。毎回違う表情を見せてくれます。</p>
+                </div>
+                <div class="gallery-item">
+                    <span class="gallery-icon">🎸</span>
+                    <h3>音楽活動</h3>
+                    <p>友達とのセッション風景や、路上ライブでの思い出。音楽で繋がる瞬間が宝物です。</p>
+                </div>
+                <div class="gallery-item">
+                    <span class="gallery-icon">🏔️</span>
+                    <h3>登山記録</h3>
+                    <p>山頂からの絶景写真や、登山仲間との楽しい思い出を記録しています。</p>
+                </div>
+                <div class="gallery-item">
+                    <span class="gallery-icon">🎉</span>
+                    <h3>イベント企画</h3>
+                    <p>友達との誕生日パーティーや季節のイベント。みんなの笑顔が一番の成功です。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 連絡先セクション -->
+    <section class="section" id="contact">
+        <div class="container">
+            <h2>お気軽にご連絡ください</h2>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 40px;">
+                何かご質問やお話ししたいことがあれば、いつでも連絡してください！
+            </p>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email</h3>
+                    <a href="mailto:taiyou@example.com">taiyou@example.com</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <h3>SNS</h3>
+                    <a href="#">@taiyou_sunshine</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <h3>LINE</h3>
+                    <a href="#">@taiyou_official</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🏠</div>
+                    <h3>拠点</h3>
+                    <p>東京都内</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 たいよう. Always Shining Bright ☀️</p>
+        </div>
+    </footer>
+
+    <script>
+        // パーティクルアニメーション
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+        });
+
+        // ヘッダーのスクロール効果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+
+        // カードのランダムアニメーション
+        function addRandomAnimations() {
+            const cards = document.querySelectorAll('.skill-card, .gallery-item, .contact-item');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+            });
+        }
+
+        // ページロード時にアニメーション開始
+        window.addEventListener('load', addRandomAnimations);
+    </script>
+</body>
+</html>
