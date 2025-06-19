@@ -1,0 +1,1692 @@
+        // 時間差計算
+        function getTimeAgo(time) {
+            const now = new Date();
+            const diff = Math.floor((now - time) / 1000);
+            
+            if (diff < 60) return `${diff}秒前`;
+            if (diff < 3600) return `${Math.floor(diff / 60)}分前`;
+            if (diff < 86400)<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAIYOU - 輝く未来を創造するクリエイティブスタジオ</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #f7931e;
+            --accent: #ffd700;
+            --dark: #1a1a1a;
+            --light: #ffffff;
+            --gray: #f8f9fa;
+            --text: #333333;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        /* プリローダー */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ユーザー登録モーダル */
+        .user-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .user-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.95));
+            backdrop-filter: blur(20px);
+            padding: 60px 50px;
+            border-radius: 30px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            transform: translateY(50px);
+            transition: transform 0.5s ease;
+        }
+
+        .user-modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .avatar-option {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.15);
+            border-color: var(--primary);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary);
+            transform: scale(1.2);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .avatar-option.selected::before {
+            opacity: 0.1;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            box-shadow: 0 5px 30px var(--shadow);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* 統計バー */
+        .stats-bar {
+            position: fixed;
+            top: 80px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--dark), #2a2a2a);
+            color: white;
+            padding: 15px 0;
+            z-index: 999;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .stats-bar.visible {
+            transform: translateY(0);
+        }
+
+        .stats-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* ヒーローセクション */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.1), rgba(255, 215, 0, 0.1));
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.1) 0%, rgba(255, 215, 0, 0.05) 50%, transparent 100%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 30px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            animation: slideUp 1s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideUp 1s ease 0.2s both;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: #666;
+            animation: slideUp 1s ease 0.4s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideUp 1s ease 0.6s both;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-primary::before, .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before, .btn-secondary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        /* セクション共通スタイル */
+        .section {
+            padding: 120px 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .section-description {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* サービスセクション */
+        .services {
+            background: var(--gray);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .service-card {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.2);
+        }
+
+        .service-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 実績セクション */
+        .achievements {
+            background: linear-gradient(135deg, var(--dark), #2a2a2a);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievements::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 50%), 
+                              radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-top: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .achievement-item {
+            text-align: center;
+        }
+
+        .achievement-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .achievement-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* 掲示板セクション */
+        .bulletin {
+            background: var(--gray);
+        }
+
+        .bulletin-container {
+            background: white;
+            border-radius: 25px;
+            padding: 60px;
+            box-shadow: 0 20px 60px var(--shadow);
+            border: 2px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .online-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        .online-dot {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--gray), #f0f0f0);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .user-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.2);
+        }
+
+        .user-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-time {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        .current-user {
+            border: 3px solid var(--accent);
+            background: linear-gradient(135deg, #fff9e6, white);
+            box-shadow: 0 15px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .current-user .user-name::after {
+            content: " ✨";
+        }
+
+        /* フッター */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 80px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0.05;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 30px;
+            text-align: center;
+            color: #888;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* パーティクル効果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 107, 53, 0.6);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.3;
+            }
+        }
+
+        /* レスポンシブデザイン */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .stats-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .services-grid,
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bulletin-container {
+                padding: 40px 30px;
+            }
+
+            .users-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* アニメーション用クラス */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* カウントアップアニメーション */
+        .countup {
+            opacity: 0;
+        }
+
+        .countup.animate {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- プリローダー -->
+    <div class="preloader" id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- パーティクル効果 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ユーザー登録モーダル -->
+    <div class="user-modal" id="userModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Welcome to TAIYOU</h2>
+            <p class="modal-subtitle">プレミアムエクスペリエンスへようこそ。あなたの情報をご入力ください。</p>
+            
+            <div class="form-group">
+                <label class="form-label">お名前 / ニックネーム</label>
+                <input type="text" id="userName" class="form-input" placeholder="ニックネームを入力してください" maxlength="20">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">プロフィールアバター</label>
+                <div class="avatar-grid">
+                    <div class="avatar-option" data-avatar="😊">😊</div>
+                    <div class="avatar-option" data-avatar="😎">😎</div>
+                    <div class="avatar-option" data-avatar="🥳">🥳</div>
+                    <div class="avatar-option" data-avatar="😇">😇</div>
+                    <div class="avatar-option" data-avatar="🤗">🤗</div>
+                    <div class="avatar-option" data-avatar="😋">😋</div>
+                    <div class="avatar-option" data-avatar="🥰">🥰</div>
+                    <div class="avatar-option" data-avatar="🌻">🌻</div>
+                    <div class="avatar-option" data-avatar="🎵">🎵</div>
+                    <div class="avatar-option" data-avatar="✨">✨</div>
+                    <div class="avatar-option" data-avatar="🌈">🌈</div>
+                    <div class="avatar-option" data-avatar="🎨">🎨</div>
+                    <div class="avatar-option" data-avatar="🎭">🎭</div>
+                    <div class="avatar-option" data-avatar="🎪">🎪</div>
+                    <div class="avatar-option" data-avatar="🎯">🎯</div>
+                    <div class="avatar-option" data-avatar="🎲">🎲</div>
+                    <div class="avatar-option" data-avatar="🎸">🎸</div>
+                    <div class="avatar-option" data-avatar="🎺">🎺</div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="registerUser()" disabled>
+                TAIYOU エクスペリエンスを開始
+            </button>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header id="header">
+        <nav>
+            <a href="#home" class="logo">TAIYOU</a>
+            <ul class="nav-links">
+                <li><a href="#home">ホーム</a></li>
+                <li><a href="#services">サービス</a></li>
+                <li><a href="#achievements">実績</a></li>
+                <li><a href="#community">みんなの掲示板</a></li>
+                <li><a href="#contact">お問い合わせ</a></li>
+            </ul>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span id="userAvatar">😊</span>
+                <span id="userNameDisplay">ゲスト</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 統計バー -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stats-content">
+            <div class="stat-item">
+                <span class="stat-number" id="totalVisitors">12,847</span>
+                <span class="stat-label">累計来場者数</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="todayVisitors">156</span>
+                <span class="stat-label">今日の来場者数</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="onlineUsers">8</span>
+                <span class="stat-label">現在オンライン</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="yourNumber">-</span>
+                <span class="stat-label">あなたは何人目？</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヒーローセクション -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-badge">✨ Premium Creative Studio</div>
+            <h1>TAIYOU</h1>
+            <p>輝く未来を創造し、世界に革新をもたらすクリエイティブエージェンシー。<br>私たちと共に、新しい可能性を切り拓きましょう。</p>
+            <div class="cta-buttons">
+                <a href="#services" class="btn-primary">サービスを見る</a>
+                <a href="#community" class="btn-secondary">掲示板に参加</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- サービスセクション -->
+    <section class="section services" id="services">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-badge">私たちの専門分野</div>
+                <h2 class="section-title">プレミアムサービス</h2>
+                <p class="section-description">
+                    最先端のテクノロジーと創造性を融合させ、お客様のビジョンを現実に変える包括的なソリューションを提供します。
+                </p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>クリエイティブデザイン</h3>
+                    <p>ブランドアイデンティティから UI/UX デザインまで、視覚的インパクトと機能性を兼ね備えたデザインソリューションを提供します。</p>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>デジタルイノベーション</h3>
+                    <p>AI技術とデジタルトランスフォーメーションを活用し、業界をリードする革新的なソリューションを開発・実装します。</p>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>成長戦略コンサルティング</h3>
+                    <p>データドリブンなアプローチで市場分析を行い、持続可能な成長戦略とマーケティングソリューションを提案します。</p>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>チーム最適化</h3>
+                    <p>組織改革とチーム最適化を通じて、企業の潜在能力を最大化し、生産性向上を実現します。</p>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>グローバル展開支援</h3>
+                    <p>国際市場への進出支援と現地化戦略により、グローバルなビジネス展開をサポートします。</p>
+                </div>
+
+                <div class="service-card fade-in">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>セキュリティソリューション</h3>
+                    <p>最新のサイバーセキュリティ技術とリスク管理により、デジタル資産と企業情報を保護します。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 実績セクション -->
+    <section class="section achievements" id="achievements">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-badge" style="background: rgba(255, 255, 255, 0.2);">私たちの実績</div>
+                <h2 class="section-title" style="color: white;">確かな成果</h2>
+                <p class="section-description" style="color: #ccc;">
+                    数字が物語る、私たちの実績と成果。世界中のクライアントと共に築き上げてきた信頼の証です。
+                </p>
+            </div>
+
+            <div class="achievements-grid">
+                <div class="achievement-item fade-in">
+                    <span class="achievement-number countup" data-target="847">0</span>
+                    <span class="achievement-label">プロジェクト完了</span>
+                </div>
+                <div class="achievement-item fade-in">
+                    <span class="achievement-number countup" data-target="95">0</span>
+                    <span class="achievement-label">顧客満足度 (%)</span>
+                </div>
+                <div class="achievement-item fade-in">
+                    <span class="achievement-number countup" data-target="127">0</span>
+                    <span class="achievement-label">チームメンバー</span>
+                </div>
+                <div class="achievement-item fade-in">
+                    <span class="achievement-number countup" data-target="23">0</span>
+                    <span class="achievement-label">受賞歴</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- コミュニティセクション -->
+    <section class="section bulletin" id="community">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-badge">リアルタイム掲示板</div>
+                <h2 class="section-title">みんなの掲示板</h2>
+                <p class="section-description">
+                    現在このサイトを訪問している仲間たち。リアルタイムで繋がる、温かいコミュニティへようこそ。
+                </p>
+            </div>
+
+            <div class="bulletin-container fade-in">
+                <div class="online-indicator">
+                    <div class="online-dot"></div>
+                    <span>🟢 オンライン中: <span id="communityCount">0</span>人</span>
+                </div>
+
+                <div class="users-grid" id="usersGrid">
+                    <!-- ユーザーカードが動的に生成されます -->
+                </div>
+
+                <!-- メッセージ表示エリア -->
+                <div class="message-area" style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 20px; border: 2px solid rgba(255, 107, 53, 0.1);">
+                    <h3 style="color: var(--primary); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-comments"></i> 最新の来場者メッセージ
+                    </h3>
+                    <div id="messageBoard" style="max-height: 300px; overflow-y: auto;">
+                        <!-- メッセージが動的に表示されます -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TAIYOU Creative Studio</h3>
+                    <p>輝く未来を創造し、世界に革新をもたらすクリエイティブエージェンシー。私たちと共に、新しい可能性を切り拓きましょう。</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>サービス</h3>
+                    <p><a href="#services">クリエイティブデザイン</a></p>
+                    <p><a href="#services">デジタルイノベーション</a></p>
+                    <p><a href="#services">成長戦略コンサルティング</a></p>
+                    <p><a href="#services">チーム最適化</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>お問い合わせ</h3>
+                    <p><a href="mailto:hello@taiyou-studio.com">hello@taiyou-studio.com</a></p>
+                    <p><a href="tel:+81-3-1234-5678">03-1234-5678</a></p>
+                    <p>東京都</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>フォローする</h3>
+                    <p><a href="#">Instagram</a></p>
+                    <p><a href="#">Twitter</a></p>
+                    <p><a href="#">LinkedIn</a></p>
+                    <p><a href="#">Behance</a></p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 TAIYOU Creative Studio. All rights reserved. | Always Shining Bright ☀️</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ユーザー管理システム
+        let currentUser = null;
+        let selectedAvatar = null;
+        let onlineUsers = [];
+        let totalVisitors = 12847;
+        let todayVisitors = 156;
+
+        // サンプルユーザーデータ
+        const sampleUsers = [
+            { name: '桜咲さくら', avatar: '🌸', joinTime: new Date(Date.now() - 180000), location: '東京' },
+            { name: '田中ひろし', avatar: '🎨', joinTime: new Date(Date.now() - 420000), location: '大阪' },
+            { name: '山田あおい', avatar: '💫', joinTime: new Date(Date.now() - 90000), location: '福岡' },
+            { name: 'みお', avatar: '🌈', joinTime: new Date(Date.now() - 600000), location: '札幌' },
+            { name: 'ゆうき', avatar: '🎯', joinTime: new Date(Date.now() - 240000), location: '名古屋' },
+            { name: 'りさ', avatar: '🎭', joinTime: new Date(Date.now() - 360000), location: '京都' },
+            { name: 'けんた', avatar: '🎪', joinTime: new Date(Date.now() - 120000), location: '横浜' }
+        ];
+
+        // メッセージデータ
+        const sampleMessages = [
+            { user: '桜咲さくら', avatar: '🌸', message: 'このサイト、とても素敵ですね！', time: new Date(Date.now() - 300000) },
+            { user: 'けんた', avatar: '🎪', message: 'デザインがかっこいい！', time: new Date(Date.now() - 180000) },
+            { user: 'みお', avatar: '🌈', message: 'みなさんよろしくお願いします😊', time: new Date(Date.now() - 120000) },
+            { user: 'ゆうき', avatar: '🎯', message: 'アニメーションがすごい', time: new Date(Date.now() - 60000) }
+        ];
+
+        let messageBoard = [...sampleMessages];
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.getElementById('preloader').classList.add('hidden');
+                setTimeout(() => {
+                    showUserModal();
+                }, 500);
+            }, 1500);
+
+            setupAvatarSelection();
+            setupFormValidation();
+            setupScrollEffects();
+            setupParticles();
+            loadSampleUsers();
+        });
+
+        // ユーザーモーダル表示
+        function showUserModal() {
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        // アバター選択セットアップ
+        function setupAvatarSelection() {
+            const avatarOptions = document.querySelectorAll('.avatar-option');
+            avatarOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    avatarOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedAvatar = this.dataset.avatar;
+                    validateForm();
+                });
+            });
+        }
+
+        // フォーム検証セットアップ
+        function setupFormValidation() {
+            const nameInput = document.getElementById('userName');
+            nameInput.addEventListener('input', validateForm);
+            nameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !document.getElementById('submitBtn').disabled) {
+                    registerUser();
+                }
+            });
+        }
+
+        // フォーム検証
+        function validateForm() {
+            const name = document.getElementById('userName').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (name && selectedAvatar) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // ユーザー登録
+        function registerUser() {
+            const name = document.getElementById('userName').value.trim();
+            
+            if (!name || !selectedAvatar) return;
+
+            currentUser = {
+                name: name,
+                avatar: selectedAvatar,
+                joinTime: new Date(),
+                isCurrentUser: true,
+                location: '日本'
+            };
+
+            // ユーザーリストに追加
+            onlineUsers.push(currentUser);
+            totalVisitors++;
+            todayVisitors++;
+
+            // 入場メッセージを追加
+            const welcomeMessage = {
+                user: name,
+                avatar: selectedAvatar,
+                message: `${name}さんが参加しました！👋`,
+                time: new Date(),
+                isWelcome: true
+            };
+            messageBoard.push(welcomeMessage);
+
+            // モーダルを閉じてサイトを表示
+            document.getElementById('userModal').classList.remove('active');
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('userAvatar').textContent = selectedAvatar;
+            document.getElementById('userNameDisplay').textContent = name;
+            document.getElementById('statsBar').classList.add('visible');
+            document.getElementById('yourNumber').textContent = `${totalVisitors}人目`;
+
+            // 統計更新
+            updateStats();
+            updateCommunity();
+            updateMessageBoard();
+            startRealtimeUpdates();
+
+            // ウェルカムメッセージ
+            setTimeout(() => {
+                alert(`${name}さん、ようこそTAIYOUへ！🌟\nあなたは累計${totalVisitors.toLocaleString()}人目の来場者です！`);
+            }, 1000);
+        }
+
+        // サンプルユーザー読み込み
+        function loadSampleUsers() {
+            onlineUsers = [...sampleUsers];
+            updateMessageBoard();
+        }
+
+        // 統計更新
+        function updateStats() {
+            document.getElementById('totalVisitors').textContent = totalVisitors.toLocaleString();
+            document.getElementById('todayVisitors').textContent = todayVisitors;
+            document.getElementById('onlineUsers').textContent = onlineUsers.length;
+            document.getElementById('communityCount').textContent = onlineUsers.length;
+        }
+
+        // コミュニティ表示更新
+        function updateCommunity() {
+            const usersGrid = document.getElementById('usersGrid');
+            usersGrid.innerHTML = '';
+
+            // 最新順でソート
+            const sortedUsers = [...onlineUsers].sort((a, b) => b.joinTime - a.joinTime);
+
+            sortedUsers.forEach((user, index) => {
+                const userCard = document.createElement('div');
+                userCard.className = user.isCurrentUser ? 'user-card current-user' : 'user-card';
+                userCard.style.animationDelay = `${index * 0.1}s`;
+
+                const timeAgo = getTimeAgo(user.joinTime);
+
+                userCard.innerHTML = `
+                    <div class="user-avatar">${user.avatar}</div>
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-time">
+                        <div class="status-dot"></div>
+                        ${timeAgo} • ${user.location}
+                    </div>
+                `;
+
+                usersGrid.appendChild(userCard);
+            });
+        }
+
+        // メッセージボード更新
+        function updateMessageBoard() {
+            const messageBoardElement = document.getElementById('messageBoard');
+            if (!messageBoardElement) return;
+
+            messageBoardElement.innerHTML = '';
+
+            // 最新順でソート
+            const sortedMessages = [...messageBoard].sort((a, b) => b.time - a.time).slice(0, 5);
+
+            sortedMessages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                    background: white;
+                    border-radius: 15px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    border-left: 4px solid ${msg.isWelcome ? '#4CAF50' : 'var(--primary)'};
+                `;
+
+                const timeAgo = getTimeAgo(msg.time);
+
+                messageElement.innerHTML = `
+                    <div style="font-size: 1.5rem;">${msg.avatar}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--dark); margin-bottom: 5px;">${msg.user}</div>
+                        <div style="color: #666; margin-bottom: 5px;">${msg.message}</div>
+                        <div style="font-size: 0.8rem; color: #999;">${timeAgo}</div>
+                    </div>
+                `;
+
+                messageBoardElement.appendChild(messageElement);
+            });
+        }
+
+        // 時間差計算
+        function getTimeAgo(time) {
+            const now = new Date();
+            const diff = Math.floor((now - time) / 1000);
+            
+            if (diff < 60) return `${diff}秒前`;
+            if (diff < 3600) return `${Math.floor(diff / 60)}分前`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}時間前`;
+            return `${Math.floor(diff / 86400)}日前`;
+        }
+
+        // リアルタイム更新
+        function startRealtimeUpdates() {
+            setInterval(() => {
+                const rand = Math.random();
+                
+                if (rand < 0.3 && onlineUsers.length > 5) {
+                    // ユーザー離脱
+                    const leaveIndex = onlineUsers.findIndex(u => !u.isCurrentUser);
+                    if (leaveIndex > -1) {
+                        const leavingUser = onlineUsers[leaveIndex];
+                        onlineUsers.splice(leaveIndex, 1);
+                        
+                        // 離脱メッセージを追加
+                        const leaveMessage = {
+                            user: leavingUser.name,
+                            avatar: leavingUser.avatar,
+                            message: `${leavingUser.name}さんが退室しました`,
+                            time: new Date(),
+                            isLeave: true
+                        };
+                        messageBoard.push(leaveMessage);
+                    }
+                } else if (rand < 0.6 && onlineUsers.length < 15) {
+                    // 新規ユーザー
+                    const names = ['田中太郎', '佐藤花子', '鈴木一郎', '高橋美咲', '渡辺健太', '伊藤あんな', '山田ゆい', '中村そら'];
+                    const avatars = ['🌸', '⚡', '🌙', '🔥', '💫', '🎵', '🎨', '🌺', '⭐', '🎪'];
+                    const locations = ['東京', '大阪', '名古屋', '札幌', '福岡', '神戸', '京都', '横浜'];
+                    const messages = ['こんにちは！', 'よろしくお願いします', 'すてきなサイトですね', 'はじめまして！', 'みなさんこんばんは'];
+                    
+                    const newUser = {
+                        name: names[Math.floor(Math.random() * names.length)],
+                        avatar: avatars[Math.floor(Math.random() * avatars.length)],
+                        joinTime: new Date(),
+                        isCurrentUser: false,
+                        location: locations[Math.floor(Math.random() * locations.length)]
+                    };
+                    
+                    onlineUsers.push(newUser);
+                    totalVisitors++;
+                    todayVisitors++;
+
+                    // 参加メッセージを追加
+                    const joinMessage = {
+                        user: newUser.name,
+                        avatar: newUser.avatar,
+                        message: `${newUser.name}さんが参加しました！`,
+                        time: new Date(),
+                        isWelcome: true
+                    };
+                    messageBoard.push(joinMessage);
+
+                    // ランダムでメッセージも追加
+                    if (Math.random() < 0.4) {
+                        setTimeout(() => {
+                            const chatMessage = {
+                                user: newUser.name,
+                                avatar: newUser.avatar,
+                                message: messages[Math.floor(Math.random() * messages.length)],
+                                time: new Date()
+                            };
+                            messageBoard.push(chatMessage);
+                            updateMessageBoard();
+                        }, 2000 + Math.random() * 5000);
+                    }
+                }
+
+                updateStats();
+                updateCommunity();
+                updateMessageBoard();
+            }, 8000);
+
+            // 時間表示更新
+            setInterval(() => {
+                updateCommunity();
+                updateMessageBoard();
+            }, 30000);
+
+            // ランダムメッセージ追加
+            setInterval(() => {
+                if (Math.random() < 0.3 && onlineUsers.length > 0) {
+                    const randomUser = onlineUsers[Math.floor(Math.random() * onlineUsers.length)];
+                    const randomMessages = [
+                        'すごいデザインですね！',
+                        'このサイト気に入りました',
+                        'アニメーションがきれい',
+                        'みなさんお疲れさまです',
+                        'いいサイトですね〜',
+                        'ここのコミュニティ素敵',
+                        'また来ます！',
+                        'ありがとうございました'
+                    ];
+                    
+                    const newMessage = {
+                        user: randomUser.name,
+                        avatar: randomUser.avatar,
+                        message: randomMessages[Math.floor(Math.random() * randomMessages.length)],
+                        time: new Date()
+                    };
+                    
+                    messageBoard.push(newMessage);
+                    updateMessageBoard();
+                }
+            }, 15000);
+        }
+
+        // スクロール効果セットアップ
+        function setupScrollEffects() {
+            // ヘッダースクロール効果
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('header');
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // フェードインアニメーション
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // カウントアップアニメーション
+                        if (entry.target.classList.contains('countup')) {
+                            animateCounter(entry.target);
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in, .countup').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // カウンターアニメーション
+        function animateCounter(element) {
+            if (element.classList.contains('animate')) return;
+            
+            element.classList.add('animate');
+            const target = parseInt(element.dataset.target);
+            let current = 0;
+            const increment = target / 60;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 25);
+        }
+
+        // パーティクル効果セットアップ
+        function setupParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // スムーススクロール
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('a[href^="#"]')) {
+                e.preventDefault();
+                const target = document.querySelector(e.target.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 100;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
